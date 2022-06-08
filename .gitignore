@@ -3,8 +3,9 @@
 
 **/idea/**/*
 projects/ants/tests/__pycache__/*
-projects/ants/tests/**/*
-projects/ants/tests/*
+projects/ants/tests/**/*.py
+projects/ants/tests/*.py
+projects/ants/tests/00.py
 projects/ants/.ok_history
 projects/ants/.ok_messages
 projects/ants/.idea/**/*
