@@ -3,7 +3,10 @@
 
 **/idea/**/*
 projects/ants/tests/__pycache__/*
+projects/ants/tests/**/*
+projects/ants/tests/*
 projects/ants/.ok_history
+projects/ants/.ok_messages
 projects/ants/.idea/**/*
 projects/ants/ants_diagram.pdf
 projects/ants/__pycache__/*
