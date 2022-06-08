@@ -2,6 +2,6 @@
 ./idea/*
 
 **/idea/**/*
-./projects/ants/tests/__pycache__/*
-./projects/ants/.ok_history
-./projects/ants/.idea/**/*
+projects/ants/tests/__pycache__/*
+projects/ants/.ok_history
+projects/ants/.idea/**/*
