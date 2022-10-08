@@ -11,3 +11,10 @@ projects/ants/.ok_messages
 projects/ants/.idea/**/*
 projects/ants/ants_diagram.pdf
 projects/ants/__pycache__/*
+projects/**/.ok_history
+projects/**/.ok_messages
+projects/**/__pycache__
+projects/**/.ok_storage
+projects/**/.ok_history
+projects/project1_hog/tests
+.vscode
