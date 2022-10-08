@@ -1,8 +1,9 @@
 """The Game of Hog."""
 
+from operator import truediv
 from dice import six_sided, make_test_dice
 from ucb import main, trace, interact
-from math import log2
+from math import log2, sqrt, isqrt
 
 GOAL = 100  # The goal of Hog is to score 100 points.
 
@@ -19,10 +20,18 @@ def roll_dice(num_rolls, dice=six_sided):
     dice:       A function that simulates a single dice roll outcome.
     """
     # These assert statements ensure that num_rolls is a positive integer.
-    assert type(num_rolls) == int, 'num_rolls must be an integer.'
-    assert num_rolls > 0, 'Must roll at least once.'
+    assert type(num_rolls) == int, "num_rolls must be an integer."
+    assert num_rolls > 0, "Must roll at least once."
     # BEGIN PROBLEM 1
     "*** YOUR CODE HERE ***"
+    res = []
+    for _ in range(num_rolls):
+        res.append(dice())
+
+    if 1 in res:
+        return 1
+    else:
+        return sum(res)
     # END PROBLEM 1
 
 
@@ -34,6 +43,9 @@ def tail_points(opponent_score):
     """
     # BEGIN PROBLEM 2
     "*** YOUR CODE HERE ***"
+    tens = opponent_score // 10 % 10
+    ones = opponent_score % 10
+    return 2 * abs(tens - ones) + 1
     # END PROBLEM 2
 
 
@@ -46,11 +58,15 @@ def take_turn(num_rolls, opponent_score, dice=six_sided):
     dice:            A function that simulates a single dice roll outcome.
     """
     # Leave these assert statements here; they help check for errors.
-    assert type(num_rolls) == int, 'num_rolls must be an integer.'
-    assert num_rolls >= 0, 'Cannot roll a negative number of dice in take_turn.'
-    assert num_rolls <= 10, 'Cannot roll more than 10 dice.'
+    assert type(num_rolls) == int, "num_rolls must be an integer."
+    assert num_rolls >= 0, "Cannot roll a negative number of dice in take_turn."
+    assert num_rolls <= 10, "Cannot roll more than 10 dice."
     # BEGIN PROBLEM 3
     "*** YOUR CODE HERE ***"
+    if num_rolls == 0:
+        return tail_points(opponent_score)
+    else:
+        return roll_dice(num_rolls, dice)
     # END PROBLEM 3
 
 
@@ -74,6 +90,18 @@ def square_update(num_rolls, player_score, opponent_score, dice=six_sided):
 
 # BEGIN PROBLEM 4
 "*** YOUR CODE HERE ***"
+
+
+def perfect_square(score):
+    root = isqrt(score)
+    return score == root * root
+
+
+def next_perfect_square(score):
+    new_root = isqrt(score) + 1
+    return new_root * new_root
+
+
 # END PROBLEM 4
 
 
@@ -84,8 +112,7 @@ def always_roll_5(score, opponent_score):
     return 5
 
 
-def play(strategy0, strategy1, update,
-         score0=0, score1=0, dice=six_sided, goal=GOAL):
+def play(strategy0, strategy1, update, score0=0, score1=0, dice=six_sided, goal=GOAL):
     """Simulate a game and return the final scores of both players, with
     Player 0's score first and Player 1's score second.
 
@@ -113,6 +140,18 @@ def play(strategy0, strategy1, update,
     who = 0  # Who is about to take a turn, 0 (first) or 1 (second)
     # BEGIN PROBLEM 5
     "*** YOUR CODE HERE ***"
+    while True:
+        if who == 0:
+
+            player0_num_rolls = strategy0(score0, score1)
+            score0 = update(player0_num_rolls, score0, score1, dice)
+        elif who == 1:
+
+            player1_num_rolls = strategy1(score1, score0)
+            score1 = update(player1_num_rolls, score1, score0, dice)
+        if score0 >= goal or score1 >= goal:
+            break
+        who = abs(1 - who)
     # END PROBLEM 5
     return score0, score1
 
@@ -138,6 +177,11 @@ def always_roll(n):
     assert n >= 0 and n <= 10
     # BEGIN PROBLEM 6
     "*** YOUR CODE HERE ***"
+
+    def helper(s1, s2):
+        return n
+
+    return helper
     # END PROBLEM 6
 
 
@@ -168,6 +212,14 @@ def is_always_roll(strategy, goal=GOAL):
     """
     # BEGIN PROBLEM 7
     "*** YOUR CODE HERE ***"
+    res = []
+    for score in range(100):
+        for opponent_score in range(100):
+            res.append(strategy(score, opponent_score))
+
+    if len(set(res)) == 1:
+        return True
+    return False
     # END PROBLEM 7
 
 
@@ -184,6 +236,15 @@ def make_averaged(original_function, total_samples=1000):
     """
     # BEGIN PROBLEM 8
     "*** YOUR CODE HERE ***"
+
+    def helper(*args):
+        res = 0
+        for _ in range(total_samples):
+            res += original_function(*args)
+
+        return res / total_samples
+
+    return helper
     # END PROBLEM 8
 
 
@@ -198,6 +259,13 @@ def max_scoring_num_rolls(dice=six_sided, total_samples=1000):
     """
     # BEGIN PROBLEM 9
     "*** YOUR CODE HERE ***"
+    res = []
+    averaged_dice = make_averaged(roll_dice, total_samples)
+    for i in range(1, 11):
+        res.append(averaged_dice(i, dice))
+    max_ = max(res)
+    idx = res.index(max_)
+    return idx + 1
     # END PROBLEM 9
 
 
@@ -223,16 +291,16 @@ def average_win_rate(strategy, baseline=always_roll(6)):
 def run_experiments():
     """Run a series of strategy experiments and report results."""
     six_sided_max = max_scoring_num_rolls(six_sided)
-    print('Max scoring num rolls for six-sided dice:', six_sided_max)
+    print("Max scoring num rolls for six-sided dice:", six_sided_max)
 
-    print('always_roll(6) win rate:', average_win_rate(always_roll(6)))  # near 0.5
-    print('catch_up win rate:', average_win_rate(catch_up))
-    print('always_roll(3) win rate:', average_win_rate(always_roll(3)))
-    print('always_roll(8) win rate:', average_win_rate(always_roll(8)))
+    print("always_roll(6) win rate:", average_win_rate(always_roll(6)))  # near 0.5
+    print("catch_up win rate:", average_win_rate(catch_up))
+    print("always_roll(3) win rate:", average_win_rate(always_roll(3)))
+    print("always_roll(8) win rate:", average_win_rate(always_roll(8)))
 
-    print('tail_strategy win rate:', average_win_rate(tail_strategy))
-    print('square_strategy win rate:', average_win_rate(square_strategy))
-    print('final_strategy win rate:', average_win_rate(final_strategy))
+    print("tail_strategy win rate:", average_win_rate(tail_strategy))
+    print("square_strategy win rate:", average_win_rate(square_strategy))
+    print("final_strategy win rate:", average_win_rate(final_strategy))
     "*** You may add additional experiments as you wish ***"
 
 
@@ -241,6 +309,9 @@ def tail_strategy(score, opponent_score, threshold=12, num_rolls=6):
     points, and returns NUM_ROLLS otherwise. Ignore score and Square Swine.
     """
     # BEGIN PROBLEM 10
+    r = tail_points(opponent_score)
+    if r >= threshold:
+        return 0
     return num_rolls  # Remove this line once implemented.
     # END PROBLEM 10
 
@@ -248,6 +319,8 @@ def tail_strategy(score, opponent_score, threshold=12, num_rolls=6):
 def square_strategy(score, opponent_score, threshold=12, num_rolls=6):
     """This strategy returns 0 dice when your score would increase by at least threshold."""
     # BEGIN PROBLEM 11
+    if square_update(0, score, opponent_score) - score >= threshold:
+        return 0
     return num_rolls  # Remove this line once implemented.
     # END PROBLEM 11
 
@@ -269,13 +342,16 @@ def final_strategy(score, opponent_score):
 # NOTE: The function in this section does not need to be changed. It uses
 # features of Python not yet covered in the course.
 
+
 @main
 def run(*args):
     """Read in the command-line argument and calls corresponding functions."""
     import argparse
+
     parser = argparse.ArgumentParser(description="Play Hog")
-    parser.add_argument('--run_experiments', '-r', action='store_true',
-                        help='Runs strategy experiments')
+    parser.add_argument(
+        "--run_experiments", "-r", action="store_true", help="Runs strategy experiments"
+    )
 
     args = parser.parse_args()
 
