@@ -16,5 +16,9 @@ projects/**/.ok_messages
 projects/**/__pycache__
 projects/**/.ok_storage
 projects/**/.ok_history
-projects/project1_hog/tests
+projects/**/tests
 .vscode
+projects/project1_hog/tests/04.py
+projects/project1_hog/tests/00.py
+projects/project2_cats/tests/*
+labs/**/tests
