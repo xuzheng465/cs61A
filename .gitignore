@@ -22,3 +22,6 @@ projects/project1_hog/tests/04.py
 projects/project1_hog/tests/00.py
 projects/project2_cats/tests/*
 labs/**/tests
+labs/**/.ok_*
+labs/**/__pycache__
+.pytest_cache
