@@ -1,4 +1,6 @@
 # cs61A
 
+- [x] dis9
+
 - [x] hw2
-- [x] hw9
+- [x] hw7
